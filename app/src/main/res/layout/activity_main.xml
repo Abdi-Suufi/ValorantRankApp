@@ -23,8 +23,8 @@
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/usernameTagEditText"
-        android:layout_width="341dp"
-        android:layout_height="50dp"
+        android:layout_width="323dp"
+        android:layout_height="51dp"
         android:layout_marginTop="144dp"
         android:background="@drawable/edittext_bg"
         android:drawableLeft="@drawable/ic_person"
@@ -33,10 +33,22 @@
         android:padding="16dp"
         android:textColor="#000"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/cameraButton"
         app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/cameraButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:contentDescription="Scan username"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/usernameTagEditText"
+        app:layout_constraintBottom_toBottomOf="@id/usernameTagEditText" />
 
     <ImageView
         android:id="@+id/peakRankImageView"

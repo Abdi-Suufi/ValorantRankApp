@@ -1,15 +1,26 @@
 package com.example.valorantrankapp;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,16 +30,19 @@ public class MainActivity extends AppCompatActivity {
     private TextView titleText;
     private EditText usernameTagEditText;
     private Button fetchRankButton;
-    private TextView currentRankTextView;  // TextView for current rank
-    private TextView peakRankTextView;     // TextView for peak rank
-    private ImageView currentRankImageView; // ImageView for current rank
-    private ImageView peakRankImageView;    // ImageView for peak rank
+    private TextView currentRankTextView;
+    private TextView peakRankTextView;
+    private ImageView currentRankImageView;
+    private ImageView peakRankImageView;
+    private ImageButton cameraButton;
+    private static final int CAMERA_REQUEST_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialize UI components
         titleText = findViewById(R.id.titleText);
         usernameTagEditText = findViewById(R.id.usernameTagEditText);
         fetchRankButton = findViewById(R.id.fetchRankButton);
@@ -36,29 +50,40 @@ public class MainActivity extends AppCompatActivity {
         peakRankTextView = findViewById(R.id.peakRankTextView);
         currentRankImageView = findViewById(R.id.currentRankImageView);
         peakRankImageView = findViewById(R.id.peakRankImageView);
+        cameraButton = findViewById(R.id.cameraButton);
 
-        fetchRankButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String usernameTag = usernameTagEditText.getText().toString().trim();
+        fetchRankButton.setOnClickListener(v -> {
+            String usernameTag = usernameTagEditText.getText().toString().trim();
 
-                if (usernameTag.isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Please enter a username#tag", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            if (usernameTag.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Please enter a username#tag", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                // Animate the transition of the elements upward
-                animateElementsUp();
+            // Animate the transition of the elements upward
+            animateElementsUp();
 
-                // Validate the format of the username#tag input
-                if (!usernameTag.contains("#")) {
-                    Toast.makeText(MainActivity.this, "Invalid format. Please use username#tag", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+            // Validate the format of the username#tag input
+            if (!usernameTag.contains("#")) {
+                Toast.makeText(MainActivity.this, "Invalid format. Please use username#tag", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                fetchRank(usernameTag);
+            fetchRank(usernameTag);
+        });
+
+        cameraButton.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
+            } else {
+                openCamera();
             }
         });
+    }
+
+    private void openCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
     }
 
     private void animateElementsUp() {
@@ -89,12 +114,12 @@ public class MainActivity extends AppCompatActivity {
 
                     // Load current rank image using Glide
                     Glide.with(MainActivity.this)
-                            .load(rankData.getCurrent_rank_image())  // Ensure this method returns the correct current rank image URL
+                            .load(rankData.getCurrent_rank_image())
                             .into(currentRankImageView);
 
                     // Load peak rank image using Glide
                     Glide.with(MainActivity.this)
-                            .load(rankData.getHighest_rank_image())  // Ensure this method returns the correct peak rank image URL
+                            .load(rankData.getHighest_rank_image())
                             .into(peakRankImageView);
                 } else {
                     Toast.makeText(MainActivity.this, "Error fetching rank data", Toast.LENGTH_SHORT).show();
@@ -106,5 +131,17 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Failed to fetch rank data", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera permission required!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
