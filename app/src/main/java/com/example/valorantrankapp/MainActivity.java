@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -14,12 +15,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView peakRankImageView;
     private ImageButton cameraButton;
     private static final int CAMERA_REQUEST_CODE = 101;
+    private ActivityResultLauncher<Intent> cameraLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +62,13 @@ public class MainActivity extends AppCompatActivity {
         currentRankImageView = findViewById(R.id.currentRankImageView);
         peakRankImageView = findViewById(R.id.peakRankImageView);
         cameraButton = findViewById(R.id.cameraButton);
+
+        cameraLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Bitmap imageBitmap = (Bitmap) result.getData().getExtras().get("data");
+                extractTextFromImage(imageBitmap);
+            }
+        });
 
         fetchRankButton.setOnClickListener(v -> {
             String usernameTag = usernameTagEditText.getText().toString().trim();
@@ -83,7 +101,44 @@ public class MainActivity extends AppCompatActivity {
 
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+        cameraLauncher.launch(cameraIntent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
+                extractTextFromImage(imageBitmap);
+            }
+        }
+    }
+
+
+    private void extractTextFromImage(Bitmap bitmap) {
+        // Create an InputImage from the Bitmap
+        InputImage image = InputImage.fromBitmap(bitmap, 0);
+
+        // Initialize TextRecognizer with TextRecognizerOptions
+        TextRecognizer recognizer = TextRecognition.getClient(new TextRecognizerOptions.Builder().build());
+
+        // Process the image to extract text
+        recognizer.process(image)
+                .addOnSuccessListener(new OnSuccessListener<Text>() {
+                    @Override
+                    public void onSuccess(Text visionText) {
+                        String extractedText = visionText.getText();
+                        // Now set the extracted text into the EditText
+                        usernameTagEditText.setText(extractedText);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "OCR failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void animateElementsUp() {
