@@ -1,63 +1,109 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#f5f5f5">
+    tools:context=".MainActivity"
+    android:background="@drawable/background">
 
-    <!-- Username Input -->
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Check rank instantly"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/usernameTagEditText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/usernameTagEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_width="341dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="144dp"
+        android:background="@drawable/edittext_bg"
+        android:drawableLeft="@drawable/ic_person"
         android:hint="Enter username#tag"
         android:inputType="text"
-        android:textColor="#000"
-        android:background="@drawable/edittext_bg"
         android:padding="16dp"
+        android:textColor="#000"
         android:textSize="16sp"
-        android:drawableLeft="@drawable/ic_person" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Fetch Rank Button -->
+    <ImageView
+        android:id="@+id/peakRankImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="12dp"
+        android:contentDescription="Peak Rank Image"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/peakRankTextView" />
+
+    <TextView
+        android:id="@+id/currentRankTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="132dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#333"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.037"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fetchRankButton" />
+
+    <TextView
+        android:id="@+id/peakRankTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="132dp"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#333"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.665"
+        app:layout_constraintStart_toEndOf="@+id/currentRankTextView"
+        app:layout_constraintTop_toBottomOf="@+id/fetchRankButton" />
+
+    <ImageView
+        android:id="@+id/currentRankImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="36dp"
+        android:contentDescription="Current Rank Image"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.038"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/currentRankTextView" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fetchRankButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/usernameTagEditText"
-        android:layout_marginTop="32dp"
+        android:layout_width="203dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="#3044B1"
+        android:padding="12dp"
         android:text="Fetch Rank"
         android:textColor="#fff"
-        android:backgroundTint="#6200EE"
-        app:cornerRadius="8dp"
-        android:padding="12dp"
-        android:textSize="18sp" />
-
-    <!-- Rank TextView -->
-    <TextView
-        android:id="@+id/rankTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/fetchRankButton"
-        android:layout_marginTop="32dp"
-        android:text="Rank info will be shown here"
         android:textSize="18sp"
-        android:textColor="#333"
-        android:gravity="center" />
+        app:cornerRadius="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/usernameTagEditText" />
 
-    <!-- Rank ImageView -->
-    <ImageView
-        android:id="@+id/rankImageView"
-        android:layout_width="243dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rankTextView"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="59dp"
-        android:layout_marginBottom="116dp"
-        android:contentDescription="Rank Image"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_foreground" />
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

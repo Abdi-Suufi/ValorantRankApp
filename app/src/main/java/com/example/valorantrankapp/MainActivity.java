@@ -1,5 +1,6 @@
 package com.example.valorantrankapp;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,20 +16,26 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
+    private TextView titleText;
     private EditText usernameTagEditText;
     private Button fetchRankButton;
-    private TextView rankTextView;
-    private ImageView rankImageView;
+    private TextView currentRankTextView;  // TextView for current rank
+    private TextView peakRankTextView;     // TextView for peak rank
+    private ImageView currentRankImageView; // ImageView for current rank
+    private ImageView peakRankImageView;    // ImageView for peak rank
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        titleText = findViewById(R.id.titleText);
         usernameTagEditText = findViewById(R.id.usernameTagEditText);
         fetchRankButton = findViewById(R.id.fetchRankButton);
-        rankTextView = findViewById(R.id.rankTextView);
-        rankImageView = findViewById(R.id.rankImageView);
+        currentRankTextView = findViewById(R.id.currentRankTextView);
+        peakRankTextView = findViewById(R.id.peakRankTextView);
+        currentRankImageView = findViewById(R.id.currentRankImageView);
+        peakRankImageView = findViewById(R.id.peakRankImageView);
 
         fetchRankButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
+                // Animate the transition of the elements upward
+                animateElementsUp();
+
                 // Validate the format of the username#tag input
                 if (!usernameTag.contains("#")) {
                     Toast.makeText(MainActivity.this, "Invalid format. Please use username#tag", Toast.LENGTH_SHORT).show();
@@ -49,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
                 fetchRank(usernameTag);
             }
         });
+    }
+
+    private void animateElementsUp() {
+        ObjectAnimator.ofFloat(titleText, "translationY", 0f, -400f).setDuration(500).start();
+        ObjectAnimator.ofFloat(usernameTagEditText, "translationY", 0f, -400f).setDuration(500).start();
+        ObjectAnimator.ofFloat(fetchRankButton, "translationY", 0f, -400f).setDuration(500).start();
+        ObjectAnimator.ofFloat(currentRankTextView, "translationY", 0f, -400f).setDuration(500).start();
+        ObjectAnimator.ofFloat(peakRankTextView, "translationY", 0f, -400f).setDuration(500).start();
+        ObjectAnimator.ofFloat(currentRankImageView, "translationY", 0f, -400f).setDuration(500).start();
+        ObjectAnimator.ofFloat(peakRankImageView, "translationY", 0f, -400f).setDuration(500).start();
     }
 
     private void fetchRank(String usernameTag) {
@@ -62,27 +82,28 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     RankData rankData = response.body();
 
-                    // Set rank details on the UI
-                    rankTextView.setText("Current Rank: " + rankData.getCurrent_rank() + "\n" +
-                            "Current Elo: " + rankData.getCurrent_elo() + "\n" +
-                            "Highest Rank: " + rankData.getHighest_rank());
+                    // Set current rank info
+                    currentRankTextView.setText("Current: " + rankData.getCurrent_rank());
+                    // Set peak rank info
+                    peakRankTextView.setText("Peak: " + rankData.getHighest_rank());
 
-                    // Load the rank image using Glide
+                    // Load current rank image using Glide
                     Glide.with(MainActivity.this)
-                            .load(rankData.getCurrent_rank_image())
-                            .into(rankImageView);
+                            .load(rankData.getCurrent_rank_image())  // Ensure this method returns the correct current rank image URL
+                            .into(currentRankImageView);
+
+                    // Load peak rank image using Glide
+                    Glide.with(MainActivity.this)
+                            .load(rankData.getHighest_rank_image())  // Ensure this method returns the correct peak rank image URL
+                            .into(peakRankImageView);
                 } else {
-                    // Handle case when API response is not successful
-                    rankTextView.setText("Failed to fetch rank. Please check the username#tag.");
-                    Toast.makeText(MainActivity.this, "Failed to fetch rank data.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Error fetching rank data", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<RankData> call, Throwable t) {
-                // Handle failure due to network issues or other errors
-                rankTextView.setText("Error: " + t.getMessage());
-                Toast.makeText(MainActivity.this, "API request failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Failed to fetch rank data", Toast.LENGTH_SHORT).show();
             }
         });
     }
