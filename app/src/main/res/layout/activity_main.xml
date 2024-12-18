@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#f5f5f5">
+
+    <!-- Username Input -->
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/usernameTagEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:hint="Enter username#tag"
+        android:inputType="text"
+        android:textColor="#000"
+        android:background="@drawable/edittext_bg"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_person" />
+
+    <!-- Fetch Rank Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/fetchRankButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/usernameTagEditText"
+        android:layout_marginTop="32dp"
+        android:text="Fetch Rank"
+        android:textColor="#fff"
+        android:backgroundTint="#6200EE"
+        app:cornerRadius="8dp"
+        android:padding="12dp"
+        android:textSize="18sp" />
+
+    <!-- Rank TextView -->
+    <TextView
+        android:id="@+id/rankTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fetchRankButton"
+        android:layout_marginTop="32dp"
+        android:text="Rank info will be shown here"
+        android:textSize="18sp"
+        android:textColor="#333"
+        android:gravity="center" />
+
+    <!-- Rank ImageView -->
+    <ImageView
+        android:id="@+id/rankImageView"
+        android:layout_width="243dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rankTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="59dp"
+        android:layout_marginBottom="116dp"
+        android:contentDescription="Rank Image"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground" />
+
+</RelativeLayout>

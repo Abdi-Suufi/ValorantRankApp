@@ -1,0 +1,46 @@
+# Gradle
+.gradle/
+build/
+*/build/
+.idea/
+.gradle/
+local.properties
+
+# User-specific configurations
+*.iml
+*.log
+*.idea/workspace.xml
+*.idea/libraries
+*.idea/modules.xml
+*.idea/gradle.xml
+
+# Android Studio
+.DS_Store
+.idea/
+*.iml
+*.hprof
+
+# Android specific
+captures/
+output/
+
+# Generated files
+*.apk
+*.ap_
+*.dex
+*.class
+
+# Log files
+*.log
+
+# Android Emulator
+*.avd/
+*.android/
+
+# IntelliJ
+.idea/
+.idea/
+
+# OS specific
+Thumbs.db
+*.swp
